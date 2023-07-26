@@ -18,7 +18,7 @@ func main() {
 	fmt.Println("Get your tickets here to attend")
 
 	//var bookings = [50]string{"Nana", "Nicole", "Peter"} -> with default items
-
+	// Infinte loop for menu access
 	for {
 		var firstName string
 		var lastName string
