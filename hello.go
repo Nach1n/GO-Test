@@ -27,43 +27,44 @@ func main() {
 
 	//var bookings = [50]string{"Nana", "Nicole", "Peter"} -> with default items
 	// Infinte loop for menu access
+	for {
+		firstName, lastName, email, userTickets := getUserInput()
+		isValidName, isValidEmail, isValidTicketNumber := helper.ValidateUserInput(
+			firstName,
+			lastName,
+			email,
+			userTickets,
+			remainingTickets,
+		)
 
-	firstName, lastName, email, userTickets := getUserInput()
-	isValidName, isValidEmail, isValidTicketNumber := helper.ValidateUserInput(
-		firstName,
-		lastName,
-		email,
-		userTickets,
-		remainingTickets,
-	)
+		if isValidName && isValidEmail && isValidTicketNumber {
+			bookTicket(userTickets, firstName, lastName, email)
+		
+			wg.Add(1)
+			go sendTicket(userTickets, firstName, lastName, email)
 
-	if isValidName && isValidEmail && isValidTicketNumber {
-		bookTicket(userTickets, firstName, lastName, email)
-	
-		wg.Add(1)
-		go sendTicket(userTickets, firstName, lastName, email)
+			firstNames := getFirstNames()
+			fmt.Printf("The first names of bookings are: %v\n", firstNames)
 
-		firstNames := getFirstNames()
-		fmt.Printf("The first names of bookings are: %v\n", firstNames)
+			noTicketsRemaining := remainingTickets == 0
 
-		noTicketsRemaining := remainingTickets == 0
-
-		if noTicketsRemaining {
-			fmt.Println("Our  conference is booked out, Come back next year")
-			//break
+			if noTicketsRemaining {
+				fmt.Println("Our  conference is booked out, Come back next year")
+				//break
+			}
+		} else {
+			if !isValidName {
+				fmt.Println("First name or last name you entered is too short")
+			}
+			if !isValidEmail {
+				fmt.Println("Email address you entered doesn't contain @ sign")
+			}
+			if !isValidTicketNumber {
+				fmt.Println("Number of tickets you entered is invalid")
+			}
 		}
-	} else {
-		if !isValidName {
-			fmt.Println("First name or last name you entered is too short")
-		}
-		if !isValidEmail {
-			fmt.Println("Email address you entered doesn't contain @ sign")
-		}
-		if !isValidTicketNumber {
-			fmt.Println("Number of tickets you entered is invalid")
-		}
+		wg.Wait()
 	}
-	wg.Wait()
 }
 
 func greetUsers() {
